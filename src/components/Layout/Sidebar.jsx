@@ -34,6 +34,9 @@ const Sidebar = () => {
   const ownerMenuItems = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
     { name: 'Data Barang', href: '/items', icon: CubeIcon },
+    { name: 'Barang Masuk', href: '/stock-in', icon: ArrowRightIcon },
+    { name: 'Barang Keluar', href: '/stock-out', icon: ArrowLeftIcon },
+    { name: 'Pesanan', href: '/orders', icon: ShoppingCartIcon },
     { name: 'Laporan', href: '/reports', icon: DocumentTextIcon },
     { name: 'Prediksi Barang', href: '/predictions', icon: ChartBarIcon },
   ];

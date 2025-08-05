@@ -770,9 +770,9 @@ router.get('/dashboard/prediction/:itemId', authenticateToken, getItemPrediction
 // Item Routes
 router.get('/items', authenticateToken, getItems);
 router.get('/items/:id', authenticateToken, getItem);
-router.post('/items', authenticateToken, authorize('admin'), createItem);
-router.put('/items/:id', authenticateToken, authorize('admin'), updateItem);
-router.delete('/items/:id', authenticateToken, authorize('admin'), deleteItem);
+router.post('/items', authenticateToken, authorize('admin', 'owner'), createItem);
+router.put('/items/:id', authenticateToken, authorize('admin', 'owner'), updateItem);
+router.delete('/items/:id', authenticateToken, authorize('admin', 'owner'), deleteItem);
 
 // Category Routes
 router.get('/categories', authenticateToken, async (req, res) => {
@@ -828,7 +828,7 @@ router.get('/stock-in', authenticateToken, async (req, res) => {
   }
 });
 
-router.post('/stock-in', authenticateToken, authorize('admin'), async (req, res) => {
+router.post('/stock-in', authenticateToken, authorize('admin', 'owner'), async (req, res) => {
   try {
     const { transaction_code, item_id, supplier_id, qty, price, total_price, date, notes } = req.body;
 
@@ -851,7 +851,7 @@ router.post('/stock-in', authenticateToken, authorize('admin'), async (req, res)
   }
 });
 
-router.put('/stock-in/:id', authenticateToken, authorize('admin'), async (req, res) => {
+router.put('/stock-in/:id', authenticateToken, authorize('admin', 'owner'), async (req, res) => {
   try {
     const { id } = req.params;
     const { transaction_code, item_id, supplier_id, qty, price, total_price, date, notes } = req.body;
@@ -870,7 +870,7 @@ router.put('/stock-in/:id', authenticateToken, authorize('admin'), async (req, r
   }
 });
 
-router.delete('/stock-in/:id', authenticateToken, authorize('admin'), async (req, res) => {
+router.delete('/stock-in/:id', authenticateToken, authorize('admin', 'owner'), async (req, res) => {
   try {
     const { id } = req.params;
     await pool.execute('DELETE FROM stock_in WHERE id = ?', [id]);
@@ -921,7 +921,7 @@ router.get('/stock-out', authenticateToken, async (req, res) => {
   }
 });
 
-router.post('/stock-out', authenticateToken, authorize('admin'), async (req, res) => {
+router.post('/stock-out', authenticateToken, authorize('admin', 'owner'), async (req, res) => {
   try {
     const { transaction_code, item_id, qty, purpose, recipient, date, notes } = req.body;
 
@@ -954,7 +954,7 @@ router.post('/stock-out', authenticateToken, authorize('admin'), async (req, res
   }
 });
 
-router.put('/stock-out/:id', authenticateToken, authorize('admin'), async (req, res) => {
+router.put('/stock-out/:id', authenticateToken, authorize('admin', 'owner'), async (req, res) => {
   try {
     const { id } = req.params;
     const { transaction_code, item_id, qty, purpose, recipient, date, notes } = req.body;
@@ -973,7 +973,7 @@ router.put('/stock-out/:id', authenticateToken, authorize('admin'), async (req, 
   }
 });
 
-router.delete('/stock-out/:id', authenticateToken, authorize('admin'), async (req, res) => {
+router.delete('/stock-out/:id', authenticateToken, authorize('admin', 'owner'), async (req, res) => {
   try {
     const { id } = req.params;
     await pool.execute('DELETE FROM stock_out WHERE id = ?', [id]);
@@ -1278,8 +1278,8 @@ export const getReports = async (req, res) => {
 router.get('/orders', authenticateToken, authorize('admin', 'owner', 'supplier'), getOrders);
 router.get('/orders/:id', authenticateToken, authorize('admin', 'owner', 'supplier'), getOrder);
 router.post('/orders', authenticateToken, authorize('admin', 'supplier'), createOrder);
-router.put('/orders/:id/status', authenticateToken, authorize('admin'), updateOrderStatus);
-router.delete('/orders/:id', authenticateToken, authorize('admin'), deleteOrder);
+router.put('/orders/:id/status', authenticateToken, authorize('admin', 'owner'), updateOrderStatus);
+router.delete('/orders/:id', authenticateToken, authorize('admin', 'owner'), deleteOrder);
 
 // Report Routes
 router.get('/reports', authenticateToken, getReports);
