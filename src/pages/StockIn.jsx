@@ -15,7 +15,8 @@ import {
 } from '@heroicons/react/24/outline';
 
 const StockIn = () => {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isOwner } = useAuth();
+  const canEdit = isAdmin; // Only admin can edit, owner is read-only
   const [stockIn, setStockIn] = useState([]);
   const [items, setItems] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -189,7 +190,7 @@ const StockIn = () => {
               </div>
             </div>
 
-            {isAdmin && (
+            {canEdit && (
               <Button onClick={() => openModal()}>
                 <PlusIcon className="h-4 w-4 mr-2" />
                 Tambah Stok Masuk
@@ -217,7 +218,7 @@ const StockIn = () => {
                     <Table.Cell header>Harga</Table.Cell>
                     <Table.Cell header>Total</Table.Cell>
                     <Table.Cell header>Catatan</Table.Cell>
-                    {isAdmin && <Table.Cell header>Aksi</Table.Cell>}
+                    {canEdit && <Table.Cell header>Aksi</Table.Cell>}
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -238,7 +239,7 @@ const StockIn = () => {
                       <Table.Cell>Rp {record.price?.toLocaleString('id-ID')}</Table.Cell>
                       <Table.Cell>Rp {record.total_price?.toLocaleString('id-ID')}</Table.Cell>
                       <Table.Cell>{record.notes || '-'}</Table.Cell>
-                      {isAdmin && (
+                      {canEdit && (
                         <Table.Cell>
                           <div className="flex space-x-2">
                             <button

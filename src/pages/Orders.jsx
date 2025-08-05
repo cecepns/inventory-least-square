@@ -18,6 +18,8 @@ import Card from '../components/UI/Card';
 import Table from '../components/UI/Table';
 
 const Orders = () => {
+  const { isAdmin, isOwner } = useAuth();
+  const canEdit = isAdmin; // Only admin can edit, owner is read-only
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -204,10 +206,12 @@ const Orders = () => {
               <option value="completed">Selesai</option>
             </select>
           </div>
-          <Button onClick={() => setShowCreateModal(true)}>
-            <PlusIcon className="h-4 w-4 mr-2" />
-            Buat Pesanan
-          </Button>
+          {canEdit && (
+            <Button onClick={() => setShowCreateModal(true)}>
+              <PlusIcon className="h-4 w-4 mr-2" />
+              Buat Pesanan
+            </Button>
+          )}
         </div>
 
         {loading ? (
@@ -248,49 +252,53 @@ const Orders = () => {
                         >
                           <EyeIcon className="h-4 w-4" />
                         </button>
-                        {order.status === 'pending' && (
+                        {canEdit && (
                           <>
+                            {order.status === 'pending' && (
+                              <>
+                                <button
+                                  onClick={() => handleStatusUpdate(order.id, 'confirmed')}
+                                  className="p-1 text-green-600 hover:text-green-800"
+                                  title="Konfirmasi"
+                                >
+                                  <CheckIcon className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleStatusUpdate(order.id, 'rejected')}
+                                  className="p-1 text-red-600 hover:text-red-800"
+                                  title="Tolak"
+                                >
+                                  <XMarkIcon className="h-4 w-4" />
+                                </button>
+                              </>
+                            )}
+                            {order.status === 'confirmed' && (
+                              <button
+                                onClick={() => handleStatusUpdate(order.id, 'shipped')}
+                                className="p-1 text-purple-600 hover:text-purple-800"
+                                title="Kirim"
+                              >
+                                <TruckIcon className="h-4 w-4" />
+                              </button>
+                            )}
+                            {order.status === 'shipped' && (
+                              <button
+                                onClick={() => handleStatusUpdate(order.id, 'completed')}
+                                className="p-1 text-green-600 hover:text-green-800"
+                                title="Selesai"
+                              >
+                                <CheckIcon className="h-4 w-4" />
+                              </button>
+                            )}
                             <button
-                              onClick={() => handleStatusUpdate(order.id, 'confirmed')}
-                              className="p-1 text-green-600 hover:text-green-800"
-                              title="Konfirmasi"
-                            >
-                              <CheckIcon className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleStatusUpdate(order.id, 'rejected')}
+                              onClick={() => handleDeleteOrder(order.id)}
                               className="p-1 text-red-600 hover:text-red-800"
-                              title="Tolak"
+                              title="Hapus"
                             >
-                              <XMarkIcon className="h-4 w-4" />
+                              <TrashIcon className="h-4 w-4" />
                             </button>
                           </>
                         )}
-                        {order.status === 'confirmed' && (
-                          <button
-                            onClick={() => handleStatusUpdate(order.id, 'shipped')}
-                            className="p-1 text-purple-600 hover:text-purple-800"
-                            title="Kirim"
-                          >
-                            <TruckIcon className="h-4 w-4" />
-                          </button>
-                        )}
-                        {order.status === 'shipped' && (
-                          <button
-                            onClick={() => handleStatusUpdate(order.id, 'completed')}
-                            className="p-1 text-green-600 hover:text-green-800"
-                            title="Selesai"
-                          >
-                            <CheckIcon className="h-4 w-4" />
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDeleteOrder(order.id)}
-                          className="p-1 text-red-600 hover:text-red-800"
-                          title="Hapus"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
                       </div>
                     </Table.Cell>
                   </Table.Row>

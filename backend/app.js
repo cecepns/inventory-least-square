@@ -992,6 +992,8 @@ export const getOrders = async (req, res) => {
   try {
     const { status, page = 1, limit = 10, search = '' } = req.query;
     const offset = (page - 1) * limit;
+    const userRole = req.user.role;
+    const userId = req.user.id;
 
     let query = `
       SELECT o.*, u.name as supplier_name, u.email as supplier_email
@@ -1001,6 +1003,13 @@ export const getOrders = async (req, res) => {
     `;
     let countQuery = 'SELECT COUNT(*) as total FROM orders o JOIN users u ON o.supplier_id = u.id WHERE 1=1';
     const params = [];
+
+    // Filter orders based on user role
+    if (userRole === 'supplier') {
+      query += ' AND o.supplier_id = ?';
+      countQuery += ' AND o.supplier_id = ?';
+      params.push(userId);
+    }
 
     if (status) {
       query += ' AND o.status = ?';
@@ -1067,7 +1076,18 @@ export const getOrder = async (req, res) => {
 
 export const createOrder = async (req, res) => {
   try {
-    const { supplier_id, items, notes } = req.body;
+    const { items, notes } = req.body;
+    const userRole = req.user.role;
+    const userId = req.user.id;
+
+    // For suppliers, use their own ID as supplier_id
+    // For admins, require supplier_id in request body
+    let supplier_id;
+    if (userRole === 'supplier') {
+      supplier_id = userId;
+    } else {
+      supplier_id = req.body.supplier_id;
+    }
 
     if (!supplier_id || !items || items.length === 0) {
       return res.status(400).json({ error: 'Supplier and items are required' });
@@ -1255,9 +1275,9 @@ export const getReports = async (req, res) => {
 // ============================================================================
 
 // Order Routes
-router.get('/orders', authenticateToken, getOrders);
-router.get('/orders/:id', authenticateToken, getOrder);
-router.post('/orders', authenticateToken, authorize('admin'), createOrder);
+router.get('/orders', authenticateToken, authorize('admin', 'owner', 'supplier'), getOrders);
+router.get('/orders/:id', authenticateToken, authorize('admin', 'owner', 'supplier'), getOrder);
+router.post('/orders', authenticateToken, authorize('admin', 'supplier'), createOrder);
 router.put('/orders/:id/status', authenticateToken, authorize('admin'), updateOrderStatus);
 router.delete('/orders/:id', authenticateToken, authorize('admin'), deleteOrder);
 

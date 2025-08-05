@@ -15,7 +15,8 @@ import {
 } from '@heroicons/react/24/outline';
 
 const StockOut = () => {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isOwner } = useAuth();
+  const canEdit = isAdmin; // Only admin can edit, owner is read-only
   const [stockOut, setStockOut] = useState([]);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -166,7 +167,7 @@ const StockOut = () => {
               </div>
             </div>
 
-            {isAdmin && (
+            {canEdit && (
               <Button onClick={() => openModal()}>
                 <PlusIcon className="h-4 w-4 mr-2" />
                 Tambah Stok Keluar
@@ -193,7 +194,7 @@ const StockOut = () => {
                     <Table.Cell header>Tujuan</Table.Cell>
                     <Table.Cell header>Penerima</Table.Cell>
                     <Table.Cell header>Catatan</Table.Cell>
-                    {isAdmin && <Table.Cell header>Aksi</Table.Cell>}
+                    {canEdit && <Table.Cell header>Aksi</Table.Cell>}
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -213,7 +214,7 @@ const StockOut = () => {
                       <Table.Cell>{record.purpose}</Table.Cell>
                       <Table.Cell>{record.recipient || '-'}</Table.Cell>
                       <Table.Cell>{record.notes || '-'}</Table.Cell>
-                      {isAdmin && (
+                      {canEdit && (
                         <Table.Cell>
                           <div className="flex space-x-2">
                             <button

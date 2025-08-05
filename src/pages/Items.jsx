@@ -17,7 +17,8 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Items = () => {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isOwner } = useAuth();
+  const canEdit = isAdmin; // Only admin can edit, owner is read-only
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -195,7 +196,7 @@ const Items = () => {
               </select>
             </div>
 
-            {isAdmin && (
+            {canEdit && (
               <Button onClick={() => openItemModal()}>
                 <PlusIcon className="h-4 w-4 mr-2" />
                 Tambah Barang
@@ -223,7 +224,7 @@ const Items = () => {
                     <Table.Cell header>Stok</Table.Cell>
                     <Table.Cell header>Status</Table.Cell>
                     <Table.Cell header>Harga</Table.Cell>
-                    {isAdmin && <Table.Cell header>Aksi</Table.Cell>}
+                    {canEdit && <Table.Cell header>Aksi</Table.Cell>}
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -250,7 +251,7 @@ const Items = () => {
                         <Table.Cell>
                           Rp {item.price?.toLocaleString('id-ID')}
                         </Table.Cell>
-                        {isAdmin && (
+                        {canEdit && (
                           <Table.Cell>
                             <div className="flex space-x-2">
                               <button

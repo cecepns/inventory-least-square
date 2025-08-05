@@ -41,6 +41,7 @@ const Sidebar = () => {
   const supplierMenuItems = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
     { name: 'Form Pesanan', href: '/create-order', icon: ShoppingCartIcon },
+    { name: 'Pesanan Saya', href: '/my-orders', icon: DocumentTextIcon },
   ];
 
   let menuItems = [];
