@@ -16,6 +16,7 @@ import Modal from '../components/UI/Modal';
 import Button from '../components/UI/Button';
 import Card from '../components/UI/Card';
 import Table from '../components/UI/Table';
+import { useAuth } from '../context/AuthContext';
 
 const Orders = () => {
   const { isAdmin, isOwner } = useAuth();
