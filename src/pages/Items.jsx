@@ -218,7 +218,7 @@ const Items = () => {
                   <Table.Row>
                     <Table.Cell header>Kode</Table.Cell>
                     <Table.Cell header>Nama</Table.Cell>
-                    <Table.Cell header>Model</Table.Cell>
+                    {/* <Table.Cell header>Model</Table.Cell> */}
                     <Table.Cell header>Warna</Table.Cell>
                     <Table.Cell header>Size</Table.Cell>
                     <Table.Cell header>Stok</Table.Cell>
@@ -353,12 +353,35 @@ const Items = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Warna
                 </label>
-                <input
-                  type="text"
+                <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                   value={formData.color}
                   onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                />
+                >
+                  <option value="">Pilih Warna</option>
+                  <option value="Blue">Blue</option>
+                  <option value="Cokpol">Cokpol</option>
+                  <option value="Coksu">Coksu</option>
+                  <option value="Dark Green">Dark Green</option>
+                  <option value="Denim">Denim</option>
+                  <option value="Fuchia">Fuchia</option>
+                  <option value="Hitam">Hitam</option>
+                  <option value="Late">Late</option>
+                  <option value="Lemon">Lemon</option>
+                  <option value="Lilac">Lilac</option>
+                  <option value="Magenta">Magenta</option>
+                  <option value="Maroon">Maroon</option>
+                  <option value="Merah">Merah</option>
+                  <option value="Milk">Milk</option>
+                  <option value="Milo">Milo</option>
+                  <option value="Mint">Mint</option>
+                  <option value="Mouve">Mouve</option>
+                  <option value="Peach">Peach</option>
+                  <option value="Putih">Putih</option>
+                  <option value="Teal">Teal</option>
+                  <option value="Terasi">Terasi</option>
+                  <option value="Sample">Sample</option>
+                </select>
               </div>
 
               <div>
@@ -428,8 +451,12 @@ const Items = () => {
                 >
                   <option value="pcs">Pcs</option>
                   <option value="kg">Kg</option>
+                  <option value="meter">Meter</option>
                   <option value="liter">Liter</option>
                   <option value="box">Box</option>
+                  <option value="pack">Pack</option>
+                  <option value="lembar">Lembar</option>
+                  <option value="cones">Cones</option>
                 </select>
               </div>
 

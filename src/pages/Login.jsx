@@ -118,9 +118,9 @@ const Login = () => {
                 <p>
                   <strong>Owner:</strong> owner / admin123
                 </p>
-                <p>
+                {/* <p>
                   <strong>Supplier:</strong> supplier1 / admin123
-                </p>
+                </p> */}
               </div>
             </div>
           </div>

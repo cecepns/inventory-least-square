@@ -9,7 +9,6 @@ import api from '../config/api';
 import toast from 'react-hot-toast';
 import {
   CubeIcon,
-  ShoppingCartIcon,
   ChartBarIcon,
   ExclamationTriangleIcon,
   ArrowTrendingUpIcon,

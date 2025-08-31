@@ -67,14 +67,7 @@ const StockOut = () => {
     }
   };
 
-  const generateTransactionCode = () => {
-    const now = new Date();
-    const year = now.getFullYear().toString().slice(-2);
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    const day = now.getDate().toString().padStart(2, '0');
-    const time = now.getTime().toString().slice(-6);
-    return `OUT${year}${month}${day}${time}`;
-  };
+
 
   const handleSearch = (e) => {
     setFilters({ ...filters, search: e.target.value, page: 1 });
