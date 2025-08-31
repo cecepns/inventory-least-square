@@ -33,10 +33,8 @@ const StockOut = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [formData, setFormData] = useState({
-    transaction_code: '',
     item_id: '',
     qty: 1,
-    purpose: '',
     recipient: '',
     date: new Date().toISOString().split('T')[0],
     notes: ''
@@ -90,10 +88,8 @@ const StockOut = () => {
     if (record) {
       setSelectedRecord(record);
       setFormData({
-        transaction_code: record.transaction_code,
         item_id: record.item_id,
         qty: record.qty,
-        purpose: record.purpose,
         recipient: record.recipient || '',
         date: record.date.split('T')[0],
         notes: record.notes || ''
@@ -101,10 +97,8 @@ const StockOut = () => {
     } else {
       setSelectedRecord(null);
       setFormData({
-        transaction_code: generateTransactionCode(),
         item_id: '',
         qty: 1,
-        purpose: '',
         recipient: '',
         date: new Date().toISOString().split('T')[0],
         notes: ''
@@ -187,11 +181,9 @@ const StockOut = () => {
               <Table>
                 <Table.Header>
                   <Table.Row>
-                    <Table.Cell header>Kode Transaksi</Table.Cell>
                     <Table.Cell header>Tanggal</Table.Cell>
                     <Table.Cell header>Barang</Table.Cell>
                     <Table.Cell header>Qty</Table.Cell>
-                    <Table.Cell header>Tujuan</Table.Cell>
                     <Table.Cell header>Penerima</Table.Cell>
                     <Table.Cell header>Catatan</Table.Cell>
                     {canEdit && <Table.Cell header>Aksi</Table.Cell>}
@@ -200,7 +192,6 @@ const StockOut = () => {
                 <Table.Body>
                   {stockOut.map((record) => (
                     <Table.Row key={record.id}>
-                      <Table.Cell className="font-medium">{record.transaction_code}</Table.Cell>
                       <Table.Cell>
                         {new Date(record.date).toLocaleDateString('id-ID')}
                       </Table.Cell>
@@ -211,7 +202,6 @@ const StockOut = () => {
                         </div>
                       </Table.Cell>
                       <Table.Cell>{record.qty}</Table.Cell>
-                      <Table.Cell>{record.purpose}</Table.Cell>
                       <Table.Cell>{record.recipient || '-'}</Table.Cell>
                       <Table.Cell>{record.notes || '-'}</Table.Cell>
                       {canEdit && (
@@ -275,19 +265,6 @@ const StockOut = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Kode Transaksi *
-                </label>
-                <input
-                  type="text"
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 bg-gray-50"
-                  value={formData.transaction_code}
-                  readOnly
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Tanggal *
                 </label>
                 <input
@@ -338,25 +315,7 @@ const StockOut = () => {
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tujuan *
-                </label>
-                <select
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                  value={formData.purpose}
-                  onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
-                >
-                  <option value="">Pilih Tujuan</option>
-                  <option value="Penjualan">Penjualan</option>
-                  <option value="Produksi">Produksi</option>
-                  <option value="Rusak">Barang Rusak</option>
-                  <option value="Retur">Retur</option>
-                  <option value="Transfer">Transfer</option>
-                  <option value="Lainnya">Lainnya</option>
-                </select>
-              </div>
+
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

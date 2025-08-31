@@ -10,8 +10,6 @@ import StockIn from './pages/StockIn';
 import StockOut from './pages/StockOut';
 import Predictions from './pages/Predictions';
 import Orders from './pages/Orders';
-import CreateOrder from './pages/CreateOrder';
-import SupplierOrders from './pages/SupplierOrders';
 import Reports from './pages/Reports';
 import Users from './pages/Users';
 
@@ -84,7 +82,7 @@ function App() {
               path="/stock-in" 
               element={
                 <ProtectedRoute>
-                  <RoleRoute allowedRoles={['admin', 'owner']}>
+                  <RoleRoute allowedRoles={['admin']}>
                     <StockIn />
                   </RoleRoute>
                 </ProtectedRoute>
@@ -95,7 +93,7 @@ function App() {
               path="/stock-out" 
               element={
                 <ProtectedRoute>
-                  <RoleRoute allowedRoles={['admin', 'owner']}>
+                  <RoleRoute allowedRoles={['admin']}>
                     <StockOut />
                   </RoleRoute>
                 </ProtectedRoute>
@@ -117,30 +115,8 @@ function App() {
               path="/orders" 
               element={
                 <ProtectedRoute>
-                  <RoleRoute allowedRoles={['admin', 'owner']}>
+                  <RoleRoute allowedRoles={['admin']}>
                     <Orders />
-                  </RoleRoute>
-                </ProtectedRoute>
-              } 
-            />
-            
-            <Route 
-              path="/create-order" 
-              element={
-                <ProtectedRoute>
-                  <RoleRoute allowedRoles={['supplier']}>
-                    <CreateOrder />
-                  </RoleRoute>
-                </ProtectedRoute>
-              } 
-            />
-            
-            <Route 
-              path="/my-orders" 
-              element={
-                <ProtectedRoute>
-                  <RoleRoute allowedRoles={['supplier']}>
-                    <SupplierOrders />
                   </RoleRoute>
                 </ProtectedRoute>
               } 

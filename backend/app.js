@@ -1080,6 +1080,14 @@ export const createOrder = async (req, res) => {
     const userRole = req.user.role;
     const userId = req.user.id;
 
+    // Debug logging
+    console.log('Create order request:', {
+      userRole,
+      userId,
+      items: items?.length || 0,
+      hasSupplierId: !!req.body.supplier_id
+    });
+
     // For suppliers, use their own ID as supplier_id
     // For admins, require supplier_id in request body
     let supplier_id;
@@ -1089,8 +1097,27 @@ export const createOrder = async (req, res) => {
       supplier_id = req.body.supplier_id;
     }
 
-    if (!supplier_id || !items || items.length === 0) {
-      return res.status(400).json({ error: 'Supplier and items are required' });
+    // Validate required fields based on user role
+    if (userRole === 'admin' && !supplier_id) {
+      return res.status(400).json({ error: 'Supplier ID is required for admin users' });
+    }
+    
+    if (!items || items.length === 0) {
+      return res.status(400).json({ error: 'Items are required' });
+    }
+
+    // Validate that all items have required fields
+    for (const item of items) {
+      if (!item.item_id || !item.qty || item.qty <= 0 || !item.price || item.price <= 0) {
+        return res.status(400).json({ 
+          error: 'All items must have valid item_id, qty, and price',
+          details: {
+            item_id: !!item.item_id,
+            qty: item.qty > 0,
+            price: item.price > 0
+          }
+        });
+      }
     }
 
     // Generate order code

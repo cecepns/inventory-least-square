@@ -34,11 +34,9 @@ const StockIn = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [formData, setFormData] = useState({
-    transaction_code: '',
     item_id: '',
     supplier_id: '',
     qty: 1,
-    price: 0,
     date: new Date().toISOString().split('T')[0],
     notes: ''
   });
@@ -101,22 +99,18 @@ const StockIn = () => {
     if (record) {
       setSelectedRecord(record);
       setFormData({
-        transaction_code: record.transaction_code,
         item_id: record.item_id,
         supplier_id: record.supplier_id || '',
         qty: record.qty,
-        price: record.price,
         date: record.date.split('T')[0],
         notes: record.notes || ''
       });
     } else {
       setSelectedRecord(null);
       setFormData({
-        transaction_code: generateTransactionCode(),
         item_id: '',
         supplier_id: '',
         qty: 1,
-        price: 0,
         date: new Date().toISOString().split('T')[0],
         notes: ''
       });
@@ -127,16 +121,11 @@ const StockIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const submitData = {
-        ...formData,
-        total_price: formData.qty * formData.price
-      };
-
       if (selectedRecord) {
-        await api.put(`/stock-in/${selectedRecord.id}`, submitData);
+        await api.put(`/stock-in/${selectedRecord.id}`, formData);
         toast.success('Data stok masuk berhasil diperbarui');
       } else {
-        await api.post('/stock-in', submitData);
+        await api.post('/stock-in', formData);
         toast.success('Data stok masuk berhasil ditambahkan');
       }
       setShowModal(false);
@@ -163,11 +152,9 @@ const StockIn = () => {
   };
 
   const handleItemChange = (itemId) => {
-    const item = items.find(i => i.id == itemId);
     setFormData({
       ...formData,
-      item_id: itemId,
-      price: item ? item.price : 0
+      item_id: itemId
     });
   };
 
@@ -210,13 +197,10 @@ const StockIn = () => {
               <Table>
                 <Table.Header>
                   <Table.Row>
-                    <Table.Cell header>Kode Transaksi</Table.Cell>
                     <Table.Cell header>Tanggal</Table.Cell>
                     <Table.Cell header>Barang</Table.Cell>
                     <Table.Cell header>Supplier</Table.Cell>
                     <Table.Cell header>Qty</Table.Cell>
-                    <Table.Cell header>Harga</Table.Cell>
-                    <Table.Cell header>Total</Table.Cell>
                     <Table.Cell header>Catatan</Table.Cell>
                     {canEdit && <Table.Cell header>Aksi</Table.Cell>}
                   </Table.Row>
@@ -224,7 +208,6 @@ const StockIn = () => {
                 <Table.Body>
                   {stockIn.map((record) => (
                     <Table.Row key={record.id}>
-                      <Table.Cell className="font-medium">{record.transaction_code}</Table.Cell>
                       <Table.Cell>
                         {new Date(record.date).toLocaleDateString('id-ID')}
                       </Table.Cell>
@@ -236,8 +219,6 @@ const StockIn = () => {
                       </Table.Cell>
                       <Table.Cell>{record.supplier_name || '-'}</Table.Cell>
                       <Table.Cell>{record.qty}</Table.Cell>
-                      <Table.Cell>Rp {record.price?.toLocaleString('id-ID')}</Table.Cell>
-                      <Table.Cell>Rp {record.total_price?.toLocaleString('id-ID')}</Table.Cell>
                       <Table.Cell>{record.notes || '-'}</Table.Cell>
                       {canEdit && (
                         <Table.Cell>
@@ -298,19 +279,6 @@ const StockIn = () => {
         >
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Kode Transaksi *
-                </label>
-                <input
-                  type="text"
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 bg-gray-50"
-                  value={formData.transaction_code}
-                  readOnly
-                />
-              </div>
-              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Tanggal *
@@ -374,33 +342,6 @@ const StockIn = () => {
                   onChange={(e) => setFormData({ ...formData, qty: parseInt(e.target.value) })}
                 />
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Harga per Unit *
-                </label>
-                <input
-                  type="number"
-                  required
-                  min="0"
-                  step="0.01"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Total Harga
-              </label>
-              <input
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
-                value={`Rp ${(formData.qty * formData.price).toLocaleString('id-ID')}`}
-                readOnly
-              />
             </div>
 
             <div>

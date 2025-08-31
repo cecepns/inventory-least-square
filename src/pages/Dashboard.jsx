@@ -225,44 +225,6 @@ const Dashboard = () => {
             </Table>
           </Card>
         )}
-
-        {/* Quick Actions */}
-        {(isAdmin || isOwner) && (
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Aksi Cepat</h3>
-            <div className="flex flex-wrap gap-3">
-              {isAdmin && (
-                <>
-                  <Link to="/items/create">
-                    <Button variant="primary" size="sm">
-                      Tambah Barang
-                    </Button>
-                  </Link>
-                  <Link to="/stock-in/create">
-                    <Button variant="secondary" size="sm">
-                      Input Barang Masuk
-                    </Button>
-                  </Link>
-                  <Link to="/stock-out/create">
-                    <Button variant="outline" size="sm">
-                      Input Barang Keluar
-                    </Button>
-                  </Link>
-                </>
-              )}
-              <Link to="/reports">
-                <Button variant="outline" size="sm">
-                  Cetak Laporan
-                </Button>
-              </Link>
-              <Link to="/predictions">
-                <Button variant="outline" size="sm">
-                  Lihat Prediksi
-                </Button>
-              </Link>
-            </div>
-          </Card>
-        )}
       </div>
     </Layout>
   );

@@ -25,7 +25,6 @@ const Sidebar = () => {
     { name: 'Data Barang', href: '/items', icon: CubeIcon },
     { name: 'Barang Masuk', href: '/stock-in', icon: ArrowRightIcon },
     { name: 'Barang Keluar', href: '/stock-out', icon: ArrowLeftIcon },
-    { name: 'Pesanan', href: '/orders', icon: ShoppingCartIcon },
     { name: 'Laporan', href: '/reports', icon: DocumentTextIcon },
     { name: 'Prediksi Barang', href: '/predictions', icon: ChartBarIcon },
     { name: 'Kelola User', href: '/users', icon: UsersIcon },
@@ -34,17 +33,13 @@ const Sidebar = () => {
   const ownerMenuItems = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
     { name: 'Data Barang', href: '/items', icon: CubeIcon },
-    { name: 'Barang Masuk', href: '/stock-in', icon: ArrowRightIcon },
-    { name: 'Barang Keluar', href: '/stock-out', icon: ArrowLeftIcon },
-    { name: 'Pesanan', href: '/orders', icon: ShoppingCartIcon },
     { name: 'Laporan', href: '/reports', icon: DocumentTextIcon },
     { name: 'Prediksi Barang', href: '/predictions', icon: ChartBarIcon },
   ];
 
+  // Remove supplier menu items since supplier pages are removed
   const supplierMenuItems = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
-    { name: 'Form Pesanan', href: '/create-order', icon: ShoppingCartIcon },
-    { name: 'Pesanan Saya', href: '/my-orders', icon: DocumentTextIcon },
   ];
 
   let menuItems = [];
