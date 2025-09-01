@@ -234,7 +234,7 @@ const Items = () => {
                       <Table.Row key={item.id}>
                         <Table.Cell className="font-medium">{item.code}</Table.Cell>
                         <Table.Cell>{item.name}</Table.Cell>
-                        <Table.Cell>{item.model}</Table.Cell>
+                        {/* <Table.Cell>{item.model}</Table.Cell> */}
                         <Table.Cell>{item.color}</Table.Cell>
                         <Table.Cell>{item.size}</Table.Cell>
                         <Table.Cell>
