@@ -38,7 +38,6 @@ const Items = () => {
   const [formData, setFormData] = useState({
     code: '',
     name: '',
-    model: '',
     color: '',
     category_id: '',
     min_stock: 10,
@@ -93,7 +92,6 @@ const Items = () => {
       setFormData({
         code: item.code,
         name: item.name,
-        model: item.model || '',
         color: item.color || '',
         category_id: item.category_id || '',
         min_stock: item.min_stock,
@@ -107,7 +105,6 @@ const Items = () => {
       setFormData({
         code: '',
         name: '',
-        model: '',
         color: '',
         category_id: '',
         min_stock: 10,
@@ -332,17 +329,7 @@ const Items = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Model
-                </label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                  value={formData.model}
-                  onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                />
-              </div>
+
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

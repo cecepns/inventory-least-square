@@ -15,9 +15,9 @@ export const getItems = async (req, res) => {
     const params = [];
 
     if (search) {
-      query += ' AND (i.name LIKE ? OR i.code LIKE ? OR i.model LIKE ?)';
-      countQuery += ' AND (i.name LIKE ? OR i.code LIKE ? OR i.model LIKE ?)';
-      params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+      query += ' AND (i.name LIKE ? OR i.code LIKE ?)';
+      countQuery += ' AND (i.name LIKE ? OR i.code LIKE ?)';
+      params.push(`%${search}%`, `%${search}%`);
     }
 
     if (category) {
@@ -70,7 +70,7 @@ export const getItem = async (req, res) => {
 export const createItem = async (req, res) => {
   try {
     const {
-      code, name, model, color, size, category_id,
+      code, name, color, size, category_id,
       stock_qty = 0, min_stock = 10, max_stock = 1000,
       unit = 'pcs', price = 0, description
     } = req.body;
@@ -90,9 +90,9 @@ export const createItem = async (req, res) => {
     }
 
     const [result] = await pool.execute(`
-      INSERT INTO items (code, name, model, color, size, category_id, stock_qty, min_stock, max_stock, unit, price, description)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [code, name, model, color, size, category_id, stock_qty, min_stock, max_stock, unit, price, description]);
+      INSERT INTO items (code, name, color, size, category_id, stock_qty, min_stock, max_stock, unit, price, description)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [code, name, color, size, category_id, stock_qty, min_stock, max_stock, unit, price, description]);
 
     res.status(201).json({
       message: 'Item created successfully',
@@ -108,7 +108,7 @@ export const updateItem = async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      code, name, model, color, size, category_id,
+      code, name, color, size, category_id,
       min_stock, max_stock, unit, price, description
     } = req.body;
 
@@ -138,7 +138,6 @@ export const updateItem = async (req, res) => {
       UPDATE items SET 
         code = COALESCE(?, code),
         name = COALESCE(?, name),
-        model = COALESCE(?, model),
         color = COALESCE(?, color),
         size = COALESCE(?, size),
         category_id = COALESCE(?, category_id),
@@ -149,7 +148,7 @@ export const updateItem = async (req, res) => {
         description = COALESCE(?, description),
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
-    `, [code, name, model, color, size, category_id, min_stock, max_stock, unit, price, description, id]);
+    `, [code, name, color, size, category_id, min_stock, max_stock, unit, price, description, id]);
 
     res.json({ message: 'Item updated successfully' });
   } catch (error) {
