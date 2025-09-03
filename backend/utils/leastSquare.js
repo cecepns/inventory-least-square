@@ -12,22 +12,38 @@ export class LeastSquarePredictor {
         trend: 'insufficient_data',
         slope: 0,
         intercept: 0,
-        correlation: 0
+        correlation: 0,
+        calculationTable: [],
+        summaryTable: {}
       };
     }
 
     const n = this.data.length;
     let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
 
+    // Prepare calculation table data
+    const calculationTable = [];
+
     // Menghitung nilai-nilai yang diperlukan untuk least square
     this.data.forEach((point, index) => {
       const x = index + 1; // Time period
       const y = point.value;
+      const xy = x * y;
+      const x2 = x * x;
+      
+      calculationTable.push({
+        no: index + 1,
+        week: `Minggu ${index + 1}`,
+        periode: x,
+        penjualan: y,
+        x2: x2,
+        xy: xy
+      });
       
       sumX += x;
       sumY += y;
-      sumXY += x * y;
-      sumX2 += x * x;
+      sumXY += xy;
+      sumX2 += x2;
       sumY2 += y * y;
     });
 
@@ -59,13 +75,27 @@ export class LeastSquarePredictor {
       });
     }
 
+    // Prepare summary table
+    const summaryTable = {
+      x: parseFloat(sumX.toFixed(2)),
+      y: parseFloat(sumY.toFixed(2)),
+      xy: parseFloat(sumXY.toFixed(2)),
+      x2: parseFloat(sumX2.toFixed(2)),
+      n: n,
+      slope: parseFloat(slope.toFixed(4)),
+      intercept: parseFloat(intercept.toFixed(4)),
+      correlation: parseFloat(correlation.toFixed(4))
+    };
+
     return {
       predictions,
       trend,
       slope: parseFloat(slope.toFixed(4)),
       intercept: parseFloat(intercept.toFixed(4)),
       correlation: parseFloat(correlation.toFixed(4)),
-      accuracy: this.calculateAccuracy(correlation)
+      accuracy: this.calculateAccuracy(correlation),
+      calculationTable,
+      summaryTable
     };
   }
 

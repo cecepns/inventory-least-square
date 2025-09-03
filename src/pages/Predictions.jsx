@@ -334,6 +334,142 @@ const Predictions = () => {
               </Card>
             </div>
 
+            {/* Least Square Calculation Table */}
+            <Card className="p-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Tabel Perhitungan Least Square
+              </h3>
+              <div className="overflow-x-auto">
+                <Table>
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.Cell header>No</Table.Cell>
+                      <Table.Cell header>Minggu</Table.Cell>
+                      <Table.Cell header>Periode (X)</Table.Cell>
+                      <Table.Cell header>Penjualan (Y)</Table.Cell>
+                      <Table.Cell header>X²</Table.Cell>
+                      <Table.Cell header>XY</Table.Cell>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
+                    {predictionData.prediction?.calculationTable?.map((row, index) => (
+                      <Table.Row key={index}>
+                        <Table.Cell>{row.no}</Table.Cell>
+                        <Table.Cell>{row.week}</Table.Cell>
+                        <Table.Cell>{row.periode}</Table.Cell>
+                        <Table.Cell>{row.penjualan}</Table.Cell>
+                        <Table.Cell>{row.x2}</Table.Cell>
+                        <Table.Cell>{row.xy}</Table.Cell>
+                      </Table.Row>
+                    ))}
+                    {/* Total Row */}
+                    <Table.Row className="bg-gray-50 font-semibold">
+                      <Table.Cell>Total</Table.Cell>
+                      <Table.Cell>-</Table.Cell>
+                      <Table.Cell>{predictionData.prediction?.summaryTable?.x || 0}</Table.Cell>
+                      <Table.Cell>{predictionData.prediction?.summaryTable?.y || 0}</Table.Cell>
+                      <Table.Cell>{predictionData.prediction?.summaryTable?.x2 || 0}</Table.Cell>
+                      <Table.Cell>{predictionData.prediction?.summaryTable?.xy || 0}</Table.Cell>
+                    </Table.Row>
+                  </Table.Body>
+                </Table>
+              </div>
+            </Card>
+
+            {/* Results Table */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Hasil Perhitungan
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Σx</span>
+                    <span>{predictionData.prediction?.summaryTable?.x || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Σy</span>
+                    <span>{predictionData.prediction?.summaryTable?.y || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Σxy</span>
+                    <span>{predictionData.prediction?.summaryTable?.xy || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Σx²</span>
+                    <span>{predictionData.prediction?.summaryTable?.x2 || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">n</span>
+                    <span>{predictionData.prediction?.summaryTable?.n || 0}</span>
+                  </div>
+                  <hr className="my-3" />
+                  <div className="flex justify-between">
+                    <span className="font-medium">a (Intercept)</span>
+                    <span>{predictionData.prediction?.summaryTable?.intercept || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">b (Slope)</span>
+                    <span>{predictionData.prediction?.summaryTable?.slope || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">r (Korelasi)</span>
+                    <span>{predictionData.prediction?.summaryTable?.correlation || 0}</span>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Kesimpulan
+                </h3>
+                <div className="space-y-4 text-sm">
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-blue-900 mb-2">Persamaan Regresi</h4>
+                    <p className="text-blue-800">
+                      Y = {predictionData.prediction?.summaryTable?.intercept || 0} + {predictionData.prediction?.summaryTable?.slope || 0}x
+                    </p>
+                  </div>
+                  
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-green-900 mb-2">Interpretasi Korelasi</h4>
+                    <p className="text-green-800">
+                      Nilai korelasi (r) = {predictionData.prediction?.summaryTable?.correlation || 0}, 
+                      menunjukkan hubungan{' '}
+                      {Math.abs(predictionData.prediction?.summaryTable?.correlation || 0) >= 0.7 
+                        ? 'yang kuat' 
+                        : Math.abs(predictionData.prediction?.summaryTable?.correlation || 0) >= 0.5 
+                        ? 'yang sedang' 
+                        : 'yang lemah'}
+                      {' '}antara periode waktu dan penjualan.
+                    </p>
+                  </div>
+
+                  <div className="bg-yellow-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-yellow-900 mb-2">Trend Penjualan</h4>
+                    <p className="text-yellow-800">
+                      Berdasarkan nilai slope (b) = {predictionData.prediction?.summaryTable?.slope || 0}, 
+                      trend penjualan menunjukkan{' '}
+                      {(predictionData.prediction?.summaryTable?.slope || 0) > 0 
+                        ? 'peningkatan' 
+                        : (predictionData.prediction?.summaryTable?.slope || 0) < 0 
+                        ? 'penurunan' 
+                        : 'stabilitas'}
+                      {' '}dari waktu ke waktu.
+                    </p>
+                  </div>
+
+                  <div className="bg-purple-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-purple-900 mb-2">Akurasi Prediksi</h4>
+                    <p className="text-purple-800">
+                      Akurasi prediksi: {getAccuracyText(predictionData.prediction?.accuracy)}
+                      {' '}({Math.abs(predictionData.prediction?.summaryTable?.correlation || 0) * 100}%)
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
             {/* Prediction Table */}
             <Card className="p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">

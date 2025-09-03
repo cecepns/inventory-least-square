@@ -40,7 +40,6 @@ const Items = () => {
     name: '',
     model: '',
     color: '',
-    size: '',
     category_id: '',
     min_stock: 10,
     max_stock: 1000,
@@ -96,7 +95,6 @@ const Items = () => {
         name: item.name,
         model: item.model || '',
         color: item.color || '',
-        size: item.size || '',
         category_id: item.category_id || '',
         min_stock: item.min_stock,
         max_stock: item.max_stock,
@@ -111,7 +109,6 @@ const Items = () => {
         name: '',
         model: '',
         color: '',
-        size: '',
         category_id: '',
         min_stock: 10,
         max_stock: 1000,
@@ -220,7 +217,6 @@ const Items = () => {
                     <Table.Cell header>Nama</Table.Cell>
                     {/* <Table.Cell header>Model</Table.Cell> */}
                     <Table.Cell header>Warna</Table.Cell>
-                    <Table.Cell header>Size</Table.Cell>
                     <Table.Cell header>Stok</Table.Cell>
                     <Table.Cell header>Status</Table.Cell>
                     <Table.Cell header>Harga</Table.Cell>
@@ -236,7 +232,6 @@ const Items = () => {
                         <Table.Cell>{item.name}</Table.Cell>
                         {/* <Table.Cell>{item.model}</Table.Cell> */}
                         <Table.Cell>{item.color}</Table.Cell>
-                        <Table.Cell>{item.size}</Table.Cell>
                         <Table.Cell>
                           <div className="text-sm">
                             <div className="font-medium">{item.stock_qty} {item.unit}</div>
@@ -384,17 +379,7 @@ const Items = () => {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Size
-                </label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                  value={formData.size}
-                  onChange={(e) => setFormData({ ...formData, size: e.target.value })}
-                />
-              </div>
+
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
