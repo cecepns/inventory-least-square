@@ -4,6 +4,7 @@ import Layout from '../components/Layout/Layout';
 import Card from '../components/UI/Card';
 import Table from '../components/UI/Table';
 import Button from '../components/UI/Button';
+import TrendTable from '../components/UI/TrendTable';
 import { useAuth } from '../context/AuthContext';
 import api from '../config/api';
 import toast from 'react-hot-toast';
@@ -26,10 +27,13 @@ const Dashboard = () => {
     trends: [],
     prediction: { predictions: [] }
   });
+  const [weeklyTrendData, setWeeklyTrendData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [trendLoading, setTrendLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardData();
+    fetchWeeklyTrendData();
   }, []);
 
   const fetchDashboardData = async () => {
@@ -40,6 +44,17 @@ const Dashboard = () => {
       toast.error('Gagal memuat data dashboard');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchWeeklyTrendData = async () => {
+    try {
+      const response = await api.get('/dashboard/weekly-trend');
+      setWeeklyTrendData(response.data);
+    } catch (error) {
+      toast.error('Gagal memuat data trend mingguan');
+    } finally {
+      setTrendLoading(false);
     }
   };
 
@@ -177,6 +192,9 @@ const Dashboard = () => {
             </div>
           </Card>
         </div>
+
+        {/* Weekly Trend Analysis Table */}
+        <TrendTable data={weeklyTrendData} loading={trendLoading} />
 
         {/* Low Stock Alert */}
         {dashboardData.lowStockItems.length > 0 && (

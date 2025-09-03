@@ -69,6 +69,89 @@ export const getDashboardStats = async (req, res) => {
   }
 };
 
+export const getWeeklyTrend = async (req, res) => {
+  try {
+    // Get weekly stock movements for the last 12 weeks
+    const [weeklyIn] = await pool.execute(`
+      SELECT 
+        YEAR(date) as year,
+        WEEK(date, 1) as week,
+        CONCAT(YEAR(date), '-W', LPAD(WEEK(date, 1), 2, '0')) as week_period,
+        SUM(qty) as total_in
+      FROM stock_in 
+      WHERE date >= DATE_SUB(CURDATE(), INTERVAL 12 WEEK)
+      GROUP BY YEAR(date), WEEK(date, 1)
+      ORDER BY year, week
+    `);
+
+    const [weeklyOut] = await pool.execute(`
+      SELECT 
+        YEAR(date) as year,
+        WEEK(date, 1) as week,
+        CONCAT(YEAR(date), '-W', LPAD(WEEK(date, 1), 2, '0')) as week_period,
+        SUM(qty) as total_out
+      FROM stock_out 
+      WHERE date >= DATE_SUB(CURDATE(), INTERVAL 12 WEEK)
+      GROUP BY YEAR(date), WEEK(date, 1)
+      ORDER BY year, week
+    `);
+
+    // Merge weekly in and out data
+    const weeklyData = weeklyIn.map((weekIn, index) => {
+      const weekOut = weeklyOut.find(w => w.week_period === weekIn.week_period);
+      return {
+        no: index + 1,
+        week: `Minggu ${index + 1}`,
+        periode: index + 1,
+        penjualan: weekOut ? weekOut.total_out : 0,
+        week_period: weekIn.week_period,
+        stock_in: weekIn.total_in,
+        stock_out: weekOut ? weekOut.total_out : 0
+      };
+    });
+
+    // Generate least square prediction using outgoing stock as demand
+    const demandData = weeklyData.map(w => ({ value: w.penjualan }));
+    const predictor = new LeastSquarePredictor(demandData);
+    const analysis = predictor.predict(4); // Predict next 4 weeks
+
+    // Enhance calculation table with proper formatting
+    const calculationTable = analysis.calculationTable.map((row, index) => ({
+      ...row,
+      penjualan: weeklyData[index] ? weeklyData[index].penjualan : 0,
+      week_period: weeklyData[index] ? weeklyData[index].week_period : `Future-${index + 1}`
+    }));
+
+    // Add totals row
+    const totals = calculationTable.reduce((acc, row) => ({
+      periode: 0,
+      penjualan: acc.penjualan + row.penjualan,
+      x2: acc.x2 + row.x2,
+      xy: acc.xy + row.xy
+    }), { periode: 0, penjualan: 0, x2: 0, xy: 0 });
+
+    res.json({
+      weeklyData,
+      analysis: {
+        ...analysis,
+        calculationTable: [...calculationTable, {
+          no: 'Total',
+          week: 'Total',
+          periode: totals.periode,
+          penjualan: totals.penjualan,
+          x2: totals.x2,
+          xy: totals.xy
+        }]
+      },
+      trend: analysis.trend,
+      accuracy: analysis.accuracy
+    });
+  } catch (error) {
+    console.error('Weekly trend error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 export const getItemPrediction = async (req, res) => {
   try {
     const { itemId } = req.params;

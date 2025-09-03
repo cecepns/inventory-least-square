@@ -27,7 +27,7 @@ export class LeastSquarePredictor {
     // Menghitung nilai-nilai yang diperlukan untuk least square
     this.data.forEach((point, index) => {
       const x = index + 1; // Time period
-      const y = point.value;
+      const y = Number(point.value) || 0; // Ensure y is a valid number
       const xy = x * y;
       const x2 = x * x;
       
@@ -48,8 +48,9 @@ export class LeastSquarePredictor {
     });
 
     // Menghitung slope (m) dan intercept (b) dari persamaan y = mx + b
-    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-    const intercept = (sumY - slope * sumX) / n;
+    const denomSlope = (n * sumX2 - sumX * sumX);
+    const slope = denomSlope !== 0 ? (n * sumXY - sumX * sumY) / denomSlope : 0;
+    const intercept = n !== 0 ? (sumY - slope * sumX) / n : 0;
 
     // Menghitung korelasi (r)
     const numerator = n * sumXY - sumX * sumY;
@@ -75,24 +76,24 @@ export class LeastSquarePredictor {
       });
     }
 
-    // Prepare summary table
+    // Prepare summary table with null checks
     const summaryTable = {
-      x: parseFloat(sumX.toFixed(2)),
-      y: parseFloat(sumY.toFixed(2)),
-      xy: parseFloat(sumXY.toFixed(2)),
-      x2: parseFloat(sumX2.toFixed(2)),
-      n: n,
-      slope: parseFloat(slope.toFixed(4)),
-      intercept: parseFloat(intercept.toFixed(4)),
-      correlation: parseFloat(correlation.toFixed(4))
+      x: parseFloat((sumX || 0).toFixed(2)),
+      y: parseFloat((sumY || 0).toFixed(2)),
+      xy: parseFloat((sumXY || 0).toFixed(2)),
+      x2: parseFloat((sumX2 || 0).toFixed(2)),
+      n: n || 0,
+      slope: parseFloat((isFinite(slope) ? slope : 0).toFixed(4)),
+      intercept: parseFloat((isFinite(intercept) ? intercept : 0).toFixed(4)),
+      correlation: parseFloat((isFinite(correlation) ? correlation : 0).toFixed(4))
     };
 
     return {
       predictions,
       trend,
-      slope: parseFloat(slope.toFixed(4)),
-      intercept: parseFloat(intercept.toFixed(4)),
-      correlation: parseFloat(correlation.toFixed(4)),
+      slope: parseFloat((isFinite(slope) ? slope : 0).toFixed(4)),
+      intercept: parseFloat((isFinite(intercept) ? intercept : 0).toFixed(4)),
+      correlation: parseFloat((isFinite(correlation) ? correlation : 0).toFixed(4)),
       accuracy: this.calculateAccuracy(correlation),
       calculationTable,
       summaryTable
