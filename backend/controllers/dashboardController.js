@@ -122,14 +122,7 @@ export const getWeeklyTrend = async (req, res) => {
       week_period: weeklyData[index] ? weeklyData[index].week_period : `Future-${index + 1}`
     }));
 
-    // Add totals row
-    const totals = calculationTable.reduce((acc, row) => ({
-      periode: 0,
-      penjualan: acc.penjualan + row.penjualan,
-      x2: acc.x2 + row.x2,
-      xy: acc.xy + row.xy
-    }), { periode: 0, penjualan: 0, x2: 0, xy: 0 });
-
+    // Add totals row - use the summaryTable values from analysis which are already correctly calculated
     res.json({
       weeklyData,
       analysis: {
@@ -137,10 +130,10 @@ export const getWeeklyTrend = async (req, res) => {
         calculationTable: [...calculationTable, {
           no: 'Total',
           week: 'Total',
-          periode: totals.periode,
-          penjualan: totals.penjualan,
-          x2: totals.x2,
-          xy: totals.xy
+          periode: analysis.summaryTable.x,
+          penjualan: analysis.summaryTable.y,
+          x2: analysis.summaryTable.x2,
+          xy: analysis.summaryTable.xy
         }]
       },
       trend: analysis.trend,

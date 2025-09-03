@@ -76,12 +76,12 @@ export class LeastSquarePredictor {
       });
     }
 
-    // Prepare summary table with null checks
+    // Prepare summary table with proper number formatting
     const summaryTable = {
-      x: parseFloat((sumX || 0).toFixed(2)),
-      y: parseFloat((sumY || 0).toFixed(2)),
-      xy: parseFloat((sumXY || 0).toFixed(2)),
-      x2: parseFloat((sumX2 || 0).toFixed(2)),
+      x: sumX || 0,
+      y: sumY || 0,
+      xy: sumXY || 0,
+      x2: sumX2 || 0,
       n: n || 0,
       slope: parseFloat((isFinite(slope) ? slope : 0).toFixed(4)),
       intercept: parseFloat((isFinite(intercept) ? intercept : 0).toFixed(4)),
