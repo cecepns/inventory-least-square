@@ -53,7 +53,8 @@ export const getDashboardStats = async (req, res) => {
     }));
 
     // Generate prediction using least square
-    const predictor = new LeastSquarePredictor(trendData.map(d => ({ value: d.value })));
+    const predictorData = trendData.map(d => ({ value: d.value }));
+    const predictor = new LeastSquarePredictor(predictorData);
     const prediction = predictor.predict(6);
 
     res.json({
@@ -96,6 +97,33 @@ export const getWeeklyTrend = async (req, res) => {
       ORDER BY year, week
     `);
 
+    // Handle case when no data available early
+    if (!weeklyIn || weeklyIn.length === 0) {
+      return res.json({
+        weeklyData: [],
+        analysis: {
+          predictions: [],
+          trend: 'insufficient_data',
+          slope: 0,
+          intercept: 0,
+          correlation: 0,
+          calculationTable: [],
+          summaryTable: {
+            x: 0,
+            y: 0,
+            xy: 0,
+            x2: 0,
+            n: 0,
+            slope: 0,
+            intercept: 0,
+            correlation: 0
+          }
+        },
+        trend: 'insufficient_data',
+        accuracy: 'very_low'
+      });
+    }
+
     // Merge weekly in and out data
     const weeklyData = weeklyIn.map((weekIn, index) => {
       const weekOut = weeklyOut.find(w => w.week_period === weekIn.week_period);
@@ -114,6 +142,33 @@ export const getWeeklyTrend = async (req, res) => {
     const demandData = weeklyData.map(w => ({ value: w.penjualan }));
     const predictor = new LeastSquarePredictor(demandData);
     const analysis = predictor.predict(4); // Predict next 4 weeks
+
+    // Additional check for edge cases
+    if (weeklyData.length === 0 || demandData.length === 0) {
+      return res.json({
+        weeklyData: [],
+        analysis: {
+          predictions: [],
+          trend: 'insufficient_data',
+          slope: 0,
+          intercept: 0,
+          correlation: 0,
+          calculationTable: [],
+          summaryTable: {
+            x: 0,
+            y: 0,
+            xy: 0,
+            x2: 0,
+            n: 0,
+            slope: 0,
+            intercept: 0,
+            correlation: 0
+          }
+        },
+        trend: 'insufficient_data',
+        accuracy: 'very_low'
+      });
+    }
 
     // Enhance calculation table with proper formatting
     const calculationTable = analysis.calculationTable.map((row, index) => ({

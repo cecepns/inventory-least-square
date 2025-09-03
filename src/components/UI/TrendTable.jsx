@@ -29,7 +29,21 @@ const TrendTable = ({ data, loading = false }) => {
 
   const formatNumber = (num) => {
     if (typeof num === 'string') return num;
+    if (num === null || num === undefined || isNaN(num) || !isFinite(num)) {
+      return '-';
+    }
     return Number(num).toLocaleString('id-ID');
+  };
+
+  const isDataEmpty = () => {
+    if (!summaryTable) return true;
+    
+    // Check if essential calculation values are NaN or zero
+    const { x, y, xy, x2, slope, intercept, correlation } = summaryTable;
+    const hasValidData = x && y && xy && x2 && 
+                        isFinite(slope) && isFinite(intercept) && isFinite(correlation);
+    
+    return !hasValidData;
   };
 
   const getTrendColor = (trendType) => {
@@ -83,6 +97,31 @@ const TrendTable = ({ data, loading = false }) => {
         return 'text-red-600 bg-red-100';
     }
   };
+
+  // Check if data is empty and show appropriate message
+  if (isDataEmpty()) {
+    return (
+      <Card className="p-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Tabel Trend Least Square Mingguan
+        </h3>
+        <div className="text-center py-8">
+          <div className="mx-auto w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+            <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <h4 className="text-lg font-medium text-gray-900 mb-2">Data Tidak Mencukupi</h4>
+          <p className="text-gray-500 mb-4">
+            Data penjualan tidak tersedia atau tidak mencukupi untuk melakukan analisis trend.
+          </p>
+          <p className="text-sm text-gray-400">
+            Minimal diperlukan 2 data penjualan untuk dapat melakukan analisis least square.
+          </p>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -169,19 +208,19 @@ const TrendTable = ({ data, loading = false }) => {
             <div className="bg-blue-50 p-4 rounded-lg space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Slope (a):</span>
-                <span className="font-medium">{summaryTable.slope}</span>
+                <span className="font-medium">{formatNumber(summaryTable.slope)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Intercept (b):</span>
-                <span className="font-medium">{summaryTable.intercept}</span>
+                <span className="font-medium">{formatNumber(summaryTable.intercept)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Korelasi (r):</span>
-                <span className="font-medium">{summaryTable.correlation}</span>
+                <span className="font-medium">{formatNumber(summaryTable.correlation)}</span>
               </div>
               <div className="mt-3 pt-3 border-t border-blue-200">
                 <p className="text-blue-700 font-medium">
-                  Persamaan: Y = {summaryTable.slope}x + {summaryTable.intercept}
+                  Persamaan: Y = {formatNumber(summaryTable.slope)}x + {formatNumber(summaryTable.intercept)}
                 </p>
               </div>
             </div>
