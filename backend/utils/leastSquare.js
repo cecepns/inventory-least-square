@@ -5,7 +5,7 @@ export class LeastSquarePredictor {
   }
 
   // Menghitung prediksi menggunakan Linear Regression (Least Square)
-  predict(periods = 30) {
+  predict(predictionPeriods = 30) {
     if (this.data.length === 0) {
       return {
         predictions: [],
@@ -24,7 +24,7 @@ export class LeastSquarePredictor {
       const predictions = [];
       
       // For single data point, assume flat trend (same value)
-      for (let i = 1; i <= periods; i++) {
+      for (let i = 1; i <= predictionPeriods; i++) {
         predictions.push({
           period: i + 1,
           date: this.getDateForPeriod(i + 1),
@@ -133,7 +133,7 @@ export class LeastSquarePredictor {
     const lastPeriod = periods[periods.length - 1];
     const intervalStep = n % 2 === 1 ? 1 : 2; // Use same interval as data
     
-    for (let i = 1; i <= periods; i++) {
+    for (let i = 1; i <= predictionPeriods; i++) {
       const nextPeriod = lastPeriod + (i * intervalStep);
       const predictedValue = Math.max(0, Math.round(slope * nextPeriod + intercept));
       

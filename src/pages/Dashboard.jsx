@@ -50,8 +50,10 @@ const Dashboard = () => {
   const fetchWeeklyTrendData = async () => {
     try {
       const response = await api.get('/dashboard/weekly-trend');
+      console.log('Dashboard: Weekly trend response:', response.data);
       setWeeklyTrendData(response.data);
     } catch (error) {
+      console.error('Dashboard: Weekly trend error:', error);
       toast.error('Gagal memuat data trend mingguan');
     } finally {
       setTrendLoading(false);

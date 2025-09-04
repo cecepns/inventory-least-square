@@ -72,17 +72,20 @@ export const getDashboardStats = async (req, res) => {
 
 export const getWeeklyTrend = async (req, res) => {
   try {
-    // Get weekly stock movements for the last 12 weeks
+    // Get weekly stock movements - using all available data for now to ensure we get results
     const [weeklyIn] = await pool.execute(`
       SELECT 
         YEAR(date) as year,
         WEEK(date, 1) as week,
         CONCAT(YEAR(date), '-W', LPAD(WEEK(date, 1), 2, '0')) as week_period,
-        SUM(qty) as total_in
+        SUM(qty) as total_in,
+        COUNT(*) as transaction_count,
+        MIN(date) as min_date,
+        MAX(date) as max_date
       FROM stock_in 
-      WHERE date >= DATE_SUB(CURDATE(), INTERVAL 12 WEEK)
       GROUP BY YEAR(date), WEEK(date, 1)
-      ORDER BY year, week
+      ORDER BY year, week DESC
+      LIMIT 12
     `);
 
     const [weeklyOut] = await pool.execute(`
@@ -90,11 +93,14 @@ export const getWeeklyTrend = async (req, res) => {
         YEAR(date) as year,
         WEEK(date, 1) as week,
         CONCAT(YEAR(date), '-W', LPAD(WEEK(date, 1), 2, '0')) as week_period,
-        SUM(qty) as total_out
+        SUM(qty) as total_out,
+        COUNT(*) as transaction_count,
+        MIN(date) as min_date,
+        MAX(date) as max_date
       FROM stock_out 
-      WHERE date >= DATE_SUB(CURDATE(), INTERVAL 12 WEEK)
       GROUP BY YEAR(date), WEEK(date, 1)
-      ORDER BY year, week
+      ORDER BY year, week DESC
+      LIMIT 12
     `);
 
     // Handle case when no data available early
@@ -143,11 +149,15 @@ export const getWeeklyTrend = async (req, res) => {
       return periods;
     };
 
-    const periods = generatePeriods(weeklyIn.length);
+    // Reverse the arrays to get chronological order (oldest first)
+    const weeklyInReversed = weeklyIn.reverse();
+    const weeklyOutReversed = weeklyOut.reverse();
+    
+    const periods = generatePeriods(weeklyInReversed.length);
 
     // Merge weekly in and out data
-    const weeklyData = weeklyIn.map((weekIn, index) => {
-      const weekOut = weeklyOut.find(w => w.week_period === weekIn.week_period);
+    const weeklyData = weeklyInReversed.map((weekIn, index) => {
+      const weekOut = weeklyOutReversed.find(w => w.week_period === weekIn.week_period);
       return {
         no: index + 1,
         week: `Minggu ${index + 1}`,
@@ -159,13 +169,32 @@ export const getWeeklyTrend = async (req, res) => {
       };
     });
 
+    // Log the merged weekly data
+    console.log('Merged Weekly Data:', weeklyData.length, 'periods');
+    if (weeklyData.length > 0) {
+      console.log('Sample Weekly Data:', weeklyData[0]);
+    }
+
     // Generate least square prediction using outgoing stock as demand
     const demandData = weeklyData.map(w => ({ value: w.penjualan }));
+    console.log('Demand Data for Analysis:', demandData.length, 'points');
+    console.log('Sample Demand Data:', demandData[0]);
+    
     const predictor = new LeastSquarePredictor(demandData);
     const analysis = predictor.predict(4); // Predict next 4 weeks
 
+    console.log('Analysis Result:', {
+      trend: analysis.trend,
+      slope: analysis.slope,
+      intercept: analysis.intercept,
+      correlation: analysis.correlation,
+      calculationTableLength: analysis.calculationTable.length,
+      summaryTable: analysis.summaryTable
+    });
+
     // Additional check for edge cases
     if (weeklyData.length === 0 || demandData.length === 0) {
+      console.log('Edge case: Empty data arrays');
       return res.json({
         weeklyData: [],
         analysis: {

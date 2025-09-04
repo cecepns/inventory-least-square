@@ -36,12 +36,17 @@ const TrendTable = ({ data, loading = false }) => {
   };
 
   const isDataEmpty = () => {
-    if (!summaryTable) return true;
+    if (!summaryTable) {
+      return true;
+    }
     
-    // Check if essential calculation values are NaN or zero
-    const { x, y, xy, x2, slope, intercept, correlation } = summaryTable;
-    const hasValidData = x && y && xy && x2 && 
-                        isFinite(slope) && isFinite(intercept) && isFinite(correlation);
+    // Check if essential calculation values are valid (not necessarily non-zero)
+    const { x, y, xy, x2, slope, intercept, correlation, n } = summaryTable;
+    
+    // Data is considered valid if we have at least some calculation data
+    const hasValidData = (n && n > 0) && 
+                        isFinite(slope) && isFinite(intercept) && isFinite(correlation) &&
+                        (y !== undefined && y !== null);
     
     return !hasValidData;
   };
