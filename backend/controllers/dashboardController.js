@@ -124,13 +124,34 @@ export const getWeeklyTrend = async (req, res) => {
       });
     }
 
+    // Generate period values based on data length (same logic as leastSquare.js)
+    const generatePeriods = (dataLength) => {
+      const periods = [];
+      if (dataLength % 2 === 1) {
+        // Odd length: interval = 1, centered at 0
+        const center = Math.floor(dataLength / 2);
+        for (let i = 0; i < dataLength; i++) {
+          periods.push(i - center);
+        }
+      } else {
+        // Even length: interval = 2, centered at 0
+        const center = dataLength / 2;
+        for (let i = 0; i < dataLength; i++) {
+          periods.push((i - center + 0.5) * 2);
+        }
+      }
+      return periods;
+    };
+
+    const periods = generatePeriods(weeklyIn.length);
+
     // Merge weekly in and out data
     const weeklyData = weeklyIn.map((weekIn, index) => {
       const weekOut = weeklyOut.find(w => w.week_period === weekIn.week_period);
       return {
         no: index + 1,
         week: `Minggu ${index + 1}`,
-        periode: index + 1,
+        periode: periods[index], // Use new period system
         penjualan: weekOut ? weekOut.total_out : 0,
         week_period: weekIn.week_period,
         stock_in: weekIn.total_in,
@@ -235,8 +256,7 @@ export const getItemPrediction = async (req, res) => {
     const item = items[0];
 
     // Prepare data for prediction (focus on outgoing items as demand)
-    const demandData = stockHistory.map((record, index) => ({
-      period: index + 1,
+    const demandData = stockHistory.map((record) => ({
       value: Math.abs(record.stock_out),
       date: record.date
     }));

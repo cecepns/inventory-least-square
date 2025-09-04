@@ -253,12 +253,12 @@ const Predictions = () => {
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={[
                       ...predictionData.historicalData?.map((item, index) => ({
-                        period: index + 1,
+                        period: index + 1, // Keep simple numbering for chart display
                         historical: Math.abs(item.stock_out),
                         type: 'historical'
                       })) || [],
                       ...predictionData.prediction?.predictions?.slice(0, 14).map((item, index) => ({
-                        period: (predictionData.historicalData?.length || 0) + index + 1,
+                        period: (predictionData.historicalData?.length || 0) + index + 1, // Continue simple numbering for chart
                         prediction: item.value,
                         type: 'prediction'
                       })) || []

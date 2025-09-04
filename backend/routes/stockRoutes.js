@@ -1,6 +1,7 @@
 import express from 'express';
 import { pool } from '../config/database.js';
 import { authenticateToken, authorize } from '../middleware/auth.js';
+import { generateTransactionCode, generateFallbackCode } from '../utils/transactionCodeGenerator.js';
 
 const router = express.Router();
 
@@ -47,10 +48,22 @@ router.get('/stock-in', authenticateToken, async (req, res) => {
 
 router.post('/stock-in', authenticateToken, authorize('admin'), async (req, res) => {
   try {
-    const { transaction_code, item_id, supplier_id, qty, price, total_price, date, notes } = req.body;
+    let { transaction_code, item_id, supplier_id, qty, price, total_price, date, notes } = req.body;
 
-    if (!transaction_code || !item_id || !qty || !date) {
+    // Check for required fields (transaction_code is now optional)
+    if (!item_id || !qty || !date) {
       return res.status(400).json({ error: 'Required fields are missing' });
+    }
+
+    // Generate transaction code if not provided
+    if (!transaction_code) {
+      try {
+        transaction_code = await generateTransactionCode('IN', date);
+      } catch (error) {
+        console.error('Error generating transaction code:', error);
+        // Use fallback code if generation fails
+        transaction_code = generateFallbackCode('IN');
+      }
     }
 
     const [result] = await pool.execute(`
@@ -60,7 +73,8 @@ router.post('/stock-in', authenticateToken, authorize('admin'), async (req, res)
 
     res.status(201).json({
       message: 'Stock in record created successfully',
-      id: result.insertId
+      id: result.insertId,
+      transaction_code: transaction_code
     });
   } catch (error) {
     console.error('Create stock in error:', error);
@@ -140,10 +154,27 @@ router.get('/stock-out', authenticateToken, async (req, res) => {
 
 router.post('/stock-out', authenticateToken, authorize('admin'), async (req, res) => {
   try {
-    const { transaction_code, item_id, qty, purpose, recipient, date, notes } = req.body;
+    let { transaction_code, item_id, qty, purpose, recipient, date, notes } = req.body;
 
-    if (!transaction_code || !item_id || !qty || !purpose || !date) {
+    // Check for required fields (transaction_code is now optional)
+    if (!item_id || !qty || !date) {
       return res.status(400).json({ error: 'Required fields are missing' });
+    }
+
+    // Set default purpose if not provided
+    if (!purpose) {
+      purpose = 'General Use';
+    }
+
+    // Generate transaction code if not provided
+    if (!transaction_code) {
+      try {
+        transaction_code = await generateTransactionCode('OUT', date);
+      } catch (error) {
+        console.error('Error generating transaction code:', error);
+        // Use fallback code if generation fails
+        transaction_code = generateFallbackCode('OUT');
+      }
     }
 
     // Check if enough stock available
@@ -163,7 +194,8 @@ router.post('/stock-out', authenticateToken, authorize('admin'), async (req, res
 
     res.status(201).json({
       message: 'Stock out record created successfully',
-      id: result.insertId
+      id: result.insertId,
+      transaction_code: transaction_code
     });
   } catch (error) {
     console.error('Create stock out error:', error);

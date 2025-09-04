@@ -6,7 +6,7 @@ export class LeastSquarePredictor {
 
   // Menghitung prediksi menggunakan Linear Regression (Least Square)
   predict(periods = 30) {
-    if (this.data.length < 2) {
+    if (this.data.length === 0) {
       return {
         predictions: [],
         trend: 'insufficient_data',
@@ -17,6 +17,49 @@ export class LeastSquarePredictor {
         summaryTable: {}
       };
     }
+    
+    // Handle single data point case
+    if (this.data.length === 1) {
+      const singleValue = Number(this.data[0].value) || 0;
+      const predictions = [];
+      
+      // For single data point, assume flat trend (same value)
+      for (let i = 1; i <= periods; i++) {
+        predictions.push({
+          period: i + 1,
+          date: this.getDateForPeriod(i + 1),
+          value: Math.max(0, Math.round(singleValue)),
+          type: 'prediction'
+        });
+      }
+      
+      return {
+        predictions,
+        trend: 'stable',
+        slope: 0,
+        intercept: singleValue,
+        correlation: 0,
+        accuracy: 'very_low',
+        calculationTable: [{
+          no: 1,
+          week: 'Minggu 1',
+          periode: 0,
+          penjualan: singleValue,
+          x2: 0,
+          xy: 0
+        }],
+        summaryTable: {
+          x: 0,
+          y: singleValue,
+          xy: 0,
+          x2: 0,
+          n: 1,
+          slope: 0,
+          intercept: singleValue,
+          correlation: 0
+        }
+      };
+    }
 
     const n = this.data.length;
     let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
@@ -24,9 +67,32 @@ export class LeastSquarePredictor {
     // Prepare calculation table data
     const calculationTable = [];
 
+    // Generate period values based on data length
+    // For odd data length: use intervals of 1 (e.g., -2, -1, 0, 1, 2)
+    // For even data length: use intervals of 2 (e.g., -4, -2, 0, 2, 4)
+    const generatePeriods = (dataLength) => {
+      const periods = [];
+      if (dataLength % 2 === 1) {
+        // Odd length: interval = 1, centered at 0
+        const center = Math.floor(dataLength / 2);
+        for (let i = 0; i < dataLength; i++) {
+          periods.push(i - center);
+        }
+      } else {
+        // Even length: interval = 2, centered at 0
+        const center = dataLength / 2;
+        for (let i = 0; i < dataLength; i++) {
+          periods.push((i - center + 0.5) * 2);
+        }
+      }
+      return periods;
+    };
+
+    const periods = generatePeriods(n);
+
     // Menghitung nilai-nilai yang diperlukan untuk least square
     this.data.forEach((point, index) => {
-      const x = index + 1; // Time period
+      const x = periods[index]; // Time period with new logic
       const y = Number(point.value) || 0; // Ensure y is a valid number
       const xy = x * y;
       const x2 = x * x;
@@ -64,13 +130,16 @@ export class LeastSquarePredictor {
 
     // Membuat prediksi untuk periode ke depan
     const predictions = [];
+    const lastPeriod = periods[periods.length - 1];
+    const intervalStep = n % 2 === 1 ? 1 : 2; // Use same interval as data
+    
     for (let i = 1; i <= periods; i++) {
-      const nextPeriod = n + i;
+      const nextPeriod = lastPeriod + (i * intervalStep);
       const predictedValue = Math.max(0, Math.round(slope * nextPeriod + intercept));
       
       predictions.push({
         period: nextPeriod,
-        date: this.getDateForPeriod(nextPeriod),
+        date: this.getDateForPeriod(n + i),
         value: predictedValue,
         type: 'prediction'
       });
