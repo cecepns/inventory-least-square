@@ -225,7 +225,7 @@ const TrendTable = ({ data, loading = false }) => {
               </div>
               <div className="mt-3 pt-3 border-t border-blue-200">
                 <p className="text-blue-700 font-medium">
-                  Persamaan: Y = {formatNumber(summaryTable.slope)}x + {formatNumber(summaryTable.intercept)}
+                  Persamaan: Y (a + bx) = {formatNumber(summaryTable.intercept)} + {formatNumber(summaryTable.slope)}x
                 </p>
               </div>
             </div>

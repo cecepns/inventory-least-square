@@ -58,7 +58,7 @@ const Reports = () => {
       return;
     }
 
-    const headers = Object.keys(data[0]).filter((key) => key !== 'price' && key !== 'total_price');
+    const headers = Object.keys(data[0]).filter((key) => key !== 'price' && key !== 'total_price' && key !== 'size' && key !== 'model');
     const csvContent = [
       headers.join(','),
       ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
@@ -196,7 +196,6 @@ const Reports = () => {
                       <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Item</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stok</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min Stok</th>
@@ -208,7 +207,6 @@ const Reports = () => {
                         <tr key={index}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.code}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.model}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.category_name}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.stock_qty}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.min_stock}</td>
