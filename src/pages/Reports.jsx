@@ -58,7 +58,7 @@ const Reports = () => {
       return;
     }
 
-    const headers = Object.keys(data[0]);
+    const headers = Object.keys(data[0]).filter((key) => key !== 'price' && key !== 'total_price');
     const csvContent = [
       headers.join(','),
       ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
@@ -132,10 +132,10 @@ const Reports = () => {
                 onChange={(e) => setReportType(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               >
-                <option value="">Semua Laporan</option>
+                {/* <option value="">Semua Laporan</option> */}
                 <option value="stock">Laporan Stok</option>
                 <option value="movement">Laporan Pergerakan</option>
-                <option value="orders">Laporan Pesanan</option>
+                {/* <option value="orders">Laporan Pesanan</option> */}
               </select>
             </div>
             <div>
@@ -250,8 +250,8 @@ const Reports = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode Transaksi</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                        {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th> */}
+                        {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th> */}
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier/Penerima</th>
                       </tr>
@@ -267,8 +267,8 @@ const Reports = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{movement.transaction_code}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{movement.item_name}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{movement.qty}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp {movement.price?.toLocaleString()}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp {movement.total_price?.toLocaleString()}</td>
+                          {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp {movement.price?.toLocaleString()}</td> */}
+                          {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp {movement.total_price?.toLocaleString()}</td> */}
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{new Date(movement.date).toLocaleDateString('id-ID')}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{movement.supplier_name}</td>
                         </tr>

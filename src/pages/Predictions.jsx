@@ -346,7 +346,7 @@ const Predictions = () => {
                       <Table.Cell header>No</Table.Cell>
                       <Table.Cell header>Minggu</Table.Cell>
                       <Table.Cell header>Periode (X)</Table.Cell>
-                      <Table.Cell header>Penjualan (Y)</Table.Cell>
+                      <Table.Cell header>Pengeluaran (Y)</Table.Cell>
                       <Table.Cell header>X²</Table.Cell>
                       <Table.Cell header>XY</Table.Cell>
                     </Table.Row>

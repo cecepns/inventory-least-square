@@ -155,7 +155,7 @@ const TrendTable = ({ data, loading = false }) => {
                 <Table.Cell header>No</Table.Cell>
                 <Table.Cell header>Minggu</Table.Cell>
                 <Table.Cell header>Periode (X)</Table.Cell>
-                <Table.Cell header>Penjualan (Y)</Table.Cell>
+                <Table.Cell header>Pengeluaran (Y)</Table.Cell>
                 <Table.Cell header>X²</Table.Cell>
                 <Table.Cell header>XY</Table.Cell>
               </Table.Row>
@@ -212,11 +212,11 @@ const TrendTable = ({ data, loading = false }) => {
             <h4 className="text-md font-medium text-gray-800 mb-3">Hasil Analisis</h4>
             <div className="bg-blue-50 p-4 rounded-lg space-y-2 text-sm">
               <div className="flex justify-between">
-                <span>Slope (a):</span>
+                <span>Slope (a) Σy/n:</span>
                 <span className="font-medium">{formatNumber(summaryTable.slope)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Intercept (b):</span>
+                <span>Intercept (b) Σxy/Σx²:</span>
                 <span className="font-medium">{formatNumber(summaryTable.intercept)}</span>
               </div>
               <div className="flex justify-between">
